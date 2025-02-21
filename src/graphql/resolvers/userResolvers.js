@@ -1,6 +1,8 @@
 import { ApolloError } from "apollo-server-express";
-import User, { validationLogin, validationSignup, validationUpdateUser } from "../../model/user";
-import { generateToken } from "../../lib/generateToken";
+import { User, validationLogin, validationSignup, validationUpdateUser } from "../../model/user.js";
+import { generateToken } from "../../lib/generateToken.js";
+import bcrypt from "bcryptjs";
+import { ToDo } from "../../model/todo.js";
 
 const userResolvers = {
     Query: {
@@ -8,7 +10,15 @@ const userResolvers = {
             try {
                 const user = await User.findById(id);
                 if (!user) throw new ApolloError("User not found", "404");
-                return user;
+
+                const userToDo = await ToDo.find({ userId: id })
+                    .skip((1 - 1 )* 10).limit(10).populate("tasks");
+
+                // Return the user object along with its associated ToDos
+                return {
+                    ...user.toObject(),
+                    ToDos: userToDo
+                };
             } catch (error) {
                 throw new ApolloError(error.message, "500");
             }
@@ -79,7 +89,7 @@ const userResolvers = {
                 );
 
                 if (!updatedUser) throw new ApolloError("User not found", "404");
-                return { user: updatedUser };
+                return updatedUser;
             } catch (error) {
                 throw new ApolloError(error.message, "500");
             }

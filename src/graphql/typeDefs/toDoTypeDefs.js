@@ -1,19 +1,19 @@
-import gql from "apollo-server-express";
 
-const toDoTypeDefs = gql`
+const toDoTypeDefs =`
     type ToDo {
         _id: ID!,
         title: String!,
         description: String!,
-        userId: User!,
+        userId: ID!,
         completed: Boolean!,
         tasks: [Task]
+        user: [User]
     }
 
     input CreateToDoInput {
         title: String!,
         description: String!,
-        userId: String!,
+        userId: ID!,
         completed: Boolean!
     },
 
@@ -24,15 +24,14 @@ const toDoTypeDefs = gql`
     },
 
     type Query {
-        userToDo(userId: ID!): [ToDo!]!
+        userToDoList(userId: ID!, page: Int = 1, limit: Int = 10): [ToDo!]!
     },
 
     type Mutation {
         createToDo(input: CreateToDoInput): ToDo!
-        updateToDo(input: UpdateToDoInput): ToDo!
-        deleteToDo(_id: ID!): Boolean!
+        updateToDo(input: UpdateToDoInput, id: ID!): ToDo!
+        deleteToDo(id: ID!): Boolean!
     }
 `;
-
 
 export default toDoTypeDefs;

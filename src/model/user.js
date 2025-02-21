@@ -26,7 +26,7 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         required: true,
         minLength: 8,
-        maxLength: 20
+        maxLength: 200
     }
 }, { timestamps: true });
 
@@ -37,7 +37,7 @@ function validationSignup(obj) {
     const schema = Joi.object({
         username : Joi.string().min(2).max(50).trim().required(),
         email: Joi.string().email(),
-        number: Joi.number().min(6).max(20).trim().required(),
+        number: Joi.number().required(),
         password: Joi.string().min(8).max(20).trim().required()
     });
 
